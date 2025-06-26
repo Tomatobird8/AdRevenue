@@ -11,7 +11,7 @@ namespace AdRevenue.Patches
         [HarmonyPostfix]
         private static void ApplyAdRevenue(HUDManager __instance)
         {
-            int totalBonus = AdRevenue.baseCredits + math.max(AdRevenue.multiCredits * (StartOfRound.Instance.connectedPlayersAmount - 1), 0);
+            int totalBonus = AdRevenue.baseCredits + AdRevenue.multiCredits * StartOfRound.Instance.connectedPlayersAmount;
             if (AdRevenue.quotaMultiplier != 1f)
             {
                 totalBonus = (int)(math.max(AdRevenue.quotaMultiplier * TimeOfDay.Instance.timesFulfilledQuota, 1) * totalBonus);
@@ -19,6 +19,7 @@ namespace AdRevenue.Patches
             if (StartOfRound.Instance.IsHost)
             {
                 __instance.terminalScript.groupCredits += totalBonus;
+                __instance.terminalScript.SyncGroupCreditsServerRpc(__instance.terminalScript.groupCredits, __instance.terminalScript.numberOfItemsInDropship);
             }
             if (AdRevenue.displayMessage)
             {
